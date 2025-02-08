@@ -1,0 +1,26 @@
+-- Column Names
+SELECT *
+FROM superstore
+LIMIT 5;
+
+-- Order items by price from highest to lowest.
+SELECT item_name, price
+FROM superstore
+ORDER BY price DESC;
+
+-- Order categories by average price from highest to lowest
+SELECT category, AVG(price) as average_price
+FROM superstore
+GROUP BY category
+ORDER BY average_price DESC;
+
+-- What is the most expensive item in Kitchen Supplies
+SELECT item_name, MAX(price)
+FROM superstore
+WHERE category = "Kitchen Supplies";
+
+-- Rank categories from best to worst ratings
+SELECT category, AVG(average_rating)
+FROM superstore
+GROUP BY category
+ORDER BY AVG(average_rating) DESC;
