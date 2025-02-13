@@ -1,0 +1,61 @@
+-- Check data
+
+SELECT 
+	*
+FROM 
+	fortune_companies
+LIMIT 10;
+
+-- Rank the industries with the highest to lowest revenue on average
+
+SELECT
+	industry,
+    ROUND(AVG(revenue), 2) AS avg_revenue
+FROM
+	fortune_companies
+GROUP BY
+	industry
+ORDER BY avg_revenue DESC;
+
+-- Create a new column called company size and give each company a Small, Medium or Large company size based on the number of employees and count the number of companies in each company size category
+
+SELECT
+    CASE WHEN employees <= 10000 THEN "Small"
+    WHEN employees <= 100000 THEN "Medium"
+    ELSE "Large"
+    END AS company_size,
+    COUNT(*) AS number_of_companies
+FROM
+	fortune_companies
+GROUP BY 
+	company_size;
+    
+-- How many companies have healthcare benefits and 20 or more PTOs?
+
+SELECT
+	COUNT(company_id) AS number_of_companies
+FROM 
+	fortune_companies
+WHERE
+	healthcare_benefits = 1 AND
+    paid_time_off_days >= 20;
+
+-- List the companies with healthcare benefits and 20 or more PTOs
+
+SELECT
+	company_name
+FROM
+	fortune_companies
+WHERE
+	healthcare_benefits = 1 AND
+    paid_time_off_days >= 20;
+    
+-- List the industries with an average of 10 or more maternity leave weeks
+SELECT
+	industry,
+    ROUND(AVG(maternity_leave_weeks), 2) AS avg_maternity_leave_weeks
+FROM
+	fortune_companies
+GROUP BY
+	industry
+HAVING AVG(maternity_leave_weeks) >= 10;
