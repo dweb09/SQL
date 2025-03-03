@@ -1,0 +1,160 @@
+### This dataset is called chinook, which represents a digital media store and includes tables for artists, albums, media tracks, invoices, and customers, etc.
+
+
+
+-- 1 - Show Customers (their full names, customer ID, and country) who are not in the US.
+SELECT
+    FirstName,
+    LastName,
+    CustomerId,
+    Country
+FROM
+    customers
+WHERE
+    Country != "USA";
+    
+-- 2 - Show only the Customers from Brazil.
+SELECT
+    FirstName,
+    LastName,
+    CustomerId,
+    Country
+FROM
+    customers
+WHERE
+    Country = "Brazil";
+    
+-- 3 - Find the Invoices of customers who are from Brazil. The resulting table should show the customer's full name, Invoice ID, Date of the invoice, and billing country.
+SELECT
+    customers.FirstName,
+    customers.LastName,
+    invoices.InvoiceID,
+    invoices.InvoiceDate,
+    invoices.BillingCountry
+FROM
+    customers
+LEFT JOIN
+    invoices
+ON
+    customers.CustomerId = invoices.CustomerId
+WHERE
+    Country = "Brazil";
+    
+-- 4 - Find employees whose last name starts with 'C'.
+SELECT
+    EmployeeId,
+    FirstName,
+    LastName
+FROM
+    employees
+WHERE
+    LastName like "C%";
+    
+-- 5 - Retrieve all invoices with a total amount greater than $15.
+SELECT
+    InvoiceId,
+    Total
+FROM
+    invoices
+WHERE
+    Total > 15;
+    
+-- 6 - Find all tracks longer than 5 minutes.
+SELECT
+    TrackID,
+    Name,
+    Milliseconds / 1000 AS seconds
+FROM
+    tracks
+WHERE
+    seconds > 300;
+    
+-- 7 - Count the total number of customers.
+SELECT
+    COUNT (DISTINCT CustomerId) AS num_of_customers
+FROM
+    customers;
+    
+-- 8 - Find the total number of tracks in the database.
+SELECT
+    COUNT(TrackId) AS num_of_tracks
+FROM
+    tracks;
+    
+-- 8 - Calculate the average invoice total.
+SELECT
+    ROUND(AVG(Total),2) AS avg_invoice_total
+FROM
+    invoices;
+    
+-- 9 - Find the most expensive track.
+SELECT
+    Name,
+    MAX(UnitPrice)
+FROM
+    tracks;
+    
+-- 10 - Show the shortest and longest tracks.
+SELECT
+    (SELECT Name FROM tracks WHERE Milliseconds = (SELECT MAX(Milliseconds) FROM tracks)) AS longest_track,
+    (SELECT Name FROM tracks WHERE Milliseconds = (SELECT MIN(Milliseconds) FROM tracks)) AS shortest_track;
+    
+-- 11 - Retrieve each album’s title and artist name.
+SELECT
+    Title,
+    Name
+FROM
+    albums
+LEFT JOIN
+    artists
+ON
+    albums.ArtistId = artists.ArtistId;
+
+-- 12 - List all invoices with the customer’s full name.
+SELECT
+    InvoiceId,
+    FirstName,
+    LastName
+FROM
+    invoices
+LEFT JOIN
+    customers
+ON
+    invoices.CustomerId = customers.CustomerId;
+    
+-- 13 - Find all playlists and the number of tracks in each.
+SELECT
+    playlists.Name AS playlist_name,
+    COUNT(playlist_track.TrackId) AS num_of_tracks
+FROM
+    playlists
+LEFT JOIN
+    playlist_track
+ON
+    playlists.PlaylistId = playlist_track.PlaylistId
+GROUP BY
+    Name;
+
+-- 14 - Show the total sales made by each sales agent.
+SELECT
+    employees.EmployeeId,
+    employees.Title,
+    employees.FirstName,
+    employees.LastName,
+    SUM(invoices.Total) AS total_sales
+FROM
+    employees
+LEFT JOIN
+    customers
+ON
+    employees.EmployeeId = customers.SupportRepId
+LEFT JOIN
+    invoices
+ON
+    customers.CustomerId = invoices.CustomerId
+GROUP BY
+    EmployeeId
+HAVING
+    Title = "Sales Support Agent"
+ORDER BY
+    total_sales DESC;
